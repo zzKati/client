@@ -1,0 +1,97 @@
+<template>
+    <!-- 歌曲组件 
+        传过来的数据中 track.name 歌曲名字
+        track.ar[i].name 歌曲的第i个作者
+        track.al.name 专辑名字
+        dt 歌曲的时长  单位为秒(6为数)
+     -->
+    <div class="song" @dblclick="playSong">
+        <p class="index">{{ index+1 }}</p>
+        <p class="download">
+            <img src="../assets/download-solid.svg">
+        </p>
+        <p class="song-title">{{ track.name }}</p>
+        <p class="singer">{{ singer }}</p>
+        <p class="album">{{ track.al.name }}</p>
+        <p class="time">{{ time }}</p>
+    </div>
+</template>
+
+
+<script>
+import { mapMutations } from 'vuex'
+
+export default{
+    name:'Song',
+    props:['track','index'],
+    computed:{
+        singer(){
+            let result = ''
+            this.track.ar.forEach(author => {
+                result += author.name + '/'
+            })
+            return result.slice(0,result.length-1)
+        },
+        time(){
+            let second = Math.floor(this.track.dt / 1000)
+            let minute = Math.floor(second / 60)
+            second -= minute * 60
+            if(second >= 10){
+                return `${minute}:${second}`
+            }else{
+                return `${minute}:0${second}`
+            }
+
+        }
+    },
+    methods:{
+        ...mapMutations(['updatePlayList']),
+        playSong(){
+            this.updatePlayList(this.track)
+        }
+    }
+}
+</script>
+
+<style lang="less" scoped>
+
+    .song{
+        width: 90vw;
+        height: 4vh;
+        line-height: 4vh;
+        display: flex;
+        .download img{
+        width: 15px;
+        height: 15px;
+        opacity: .5;
+    }
+
+    .index{
+        width: 3vw;
+        text-align: center;
+        color:rgba(200,217,232)
+    }
+
+    .download{
+        width: 2vw;
+    }
+
+    .song-title{
+        width: 35vw;
+    }
+
+    .singer{
+        width: 20vw;
+    }
+
+    .album{
+        width: 20vw;
+    }
+    }
+    
+    .song:hover{
+        background-color: rgb(242,242,242);
+    }
+
+
+</style>
